@@ -1,34 +1,32 @@
 package com.EVBox.challenge.charging;
 
 import java.util.*;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class ChargingSessionService {
 
-    static LinkedList<ChargingSession> chargingSessions = new LinkedList<ChargingSession>();
+    public List<ChargingSession> chargingSessions = Collections.synchronizedList(new LinkedList());
 
-    public LinkedList<ChargingSession> getAllChargingSessions() {
+    public List<ChargingSession> getAllChargingSessions() {
         return chargingSessions;
-    }
-
-    public ChargingSession getChargingSession(UUID id) {
-        return findChargingSessionByID(id);
     }
 
     public ChargingSession addChargingSession(ChargingSession chargingSessionRequest) {
         ChargingSession chargingSession = new ChargingSession(chargingSessionRequest.getStartedAt(), Status.STARTED);
-        chargingSessions.addLast(chargingSession);
+        chargingSessions.add(chargingSession);
 
         Collections.sort(chargingSessions, Comparator.comparing(s -> s.getLastModified()));
         return chargingSession;
     }
 
-    public void suspendChargingSession(UUID id, ChargingSession chargingSessionRequest) {
+    public ChargingSession suspendChargingSession(UUID id, ChargingSession chargingSessionRequest) {
         int chargingSessionIndex = findChargingSessionIndexByID(id);
 
+        ChargingSession chargingSessionToUpdate = new ChargingSession();
         if (chargingSessionIndex != -1) {
-            ChargingSession chargingSessionToUpdate = chargingSessions.get(chargingSessionIndex);
+            chargingSessionToUpdate = chargingSessions.get(chargingSessionIndex);
             chargingSessionToUpdate.setSuspendedAt(chargingSessionRequest.getSuspendedAt());
             chargingSessionToUpdate.setLastModified(chargingSessionRequest.getSuspendedAt());
             chargingSessionToUpdate.setStatus(Status.SUSPENDED);
@@ -36,6 +34,11 @@ public class ChargingSessionService {
         }
 
         Collections.sort(chargingSessions, Comparator.comparing(s -> s.getLastModified()));
+        return chargingSessionToUpdate;
+    }
+
+    public ChargingSession getChargingSession(UUID id) {
+        return findChargingSessionByID(id);
     }
 
     public ChargingSummary getChargingSummary() {
@@ -49,11 +52,12 @@ public class ChargingSessionService {
         }
 
         for (int i = chargingSessions.size(); i-- > 0; ) {
-            if (chargingSessions.get(i).getLastModified().before(now) && chargingSessions.get(i).getLastModified().after(oneMinuteAgo)) {
-                if (chargingSessions.get(i).getStatus().equals(Status.STARTED)) {
+            if ((chargingSessions.get(i).getLastModified().before(now) || chargingSessions.get(i).getLastModified().equals(now))
+                    && (chargingSessions.get(i).getLastModified().after(oneMinuteAgo) || chargingSessions.get(i).getLastModified().equals(now))) {
+                if (chargingSessions.get(i).getStatus().equals(Status.SUSPENDED)) {
+                    chargingSummary.setSuspendedCount(chargingSummary.getSuspendedCount() + 1);
+                } else if (chargingSessions.get(i).getStatus().equals(Status.STARTED)) {
                     chargingSummary.setStartedCount(chargingSummary.getStartedCount() + 1);
-                } else if (chargingSessions.get(i).getStatus().equals(Status.SUSPENDED)) {
-                    chargingSummary.setStartedCount(chargingSummary.getSuspendedCount() + 1);
                 }
             }
         }
@@ -80,16 +84,12 @@ public class ChargingSessionService {
     }
 
     public int findChargingSessionIndexByID (UUID uuid) {
-        System.out.println("aqui3");
         if (chargingSessions.isEmpty()) {
             return -1;
         }
 
         for (int i = chargingSessions.size(); i-- > 0; ) {
-            System.out.println(chargingSessions.get(i).getId());
-            System.out.println(uuid);
             if (chargingSessions.get(i).getId().equals(uuid)) {
-                System.out.println("eita");
                 return i;
             }
         }

@@ -1,0 +1,73 @@
+{
+	"variables": [],
+	"info": {
+		"name": "EVBox",
+		"_postman_id": "7a6b4141-eb70-51db-ab1f-c7d19d000b6b",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "chargingSessions",
+			"request": {
+				"url": "http://localhost:8080/chargingSessions",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"startedAt\": \"2019-07-16T20:51:40.560\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "chargingSessions",
+			"request": {
+				"url": "http://localhost:8080/chargingSessions/6ec833b3-a7c5-47b5-8780-3410aa4ae763",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"suspendedAt\": \"2019-07-16T21:58:40.560\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "chargingSessions",
+			"request": {
+				"url": "http://localhost:8080/chargingSessions/",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "chargingSummary",
+			"request": {
+				"url": "http://localhost:8080/chargingSummary",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

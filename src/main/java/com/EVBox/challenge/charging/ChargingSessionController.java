@@ -1,6 +1,5 @@
 package com.EVBox.challenge.charging;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +13,7 @@ public class ChargingSessionController {
     private ChargingSessionService chargingSessionService;
 
     @RequestMapping("/chargingSessions")
-    public LinkedList<ChargingSession> getAllChargingSessions() {
+    public List<ChargingSession> getAllChargingSessions() {
         return chargingSessionService.getAllChargingSessions();
     }
 
@@ -25,7 +24,6 @@ public class ChargingSessionController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/chargingSessions/{id}")
     public ChargingSession getChargingSessionById(@PathVariable("id") UUID id) {
-        System.out.println(id);
         return chargingSessionService.getChargingSession(id);
     }
 
@@ -35,8 +33,7 @@ public class ChargingSessionController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/chargingSessions/{id}")
-    public void suspendChargingSession(@PathVariable("id") UUID id, @RequestBody ChargingSession chargingSessionRequest) {
-        System.out.println(id);
-        chargingSessionService.suspendChargingSession(id, chargingSessionRequest);
+    public ChargingSession suspendChargingSession(@PathVariable("id") UUID id, @RequestBody ChargingSession chargingSessionRequest) {
+        return chargingSessionService.suspendChargingSession(id, chargingSessionRequest);
     }
 }

@@ -1,13 +1,17 @@
 package com.EVBox.challenge.charging;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 import java.util.UUID;
 
+@JsonIgnoreProperties(value = { "lastModified" })
 public class ChargingSession {
 
     private static final long serialVersionUID = -3009157732242241606L;
 
     private UUID id;
+
     private Date startedAt;
     private Date suspendedAt;
     private Date lastModified;
